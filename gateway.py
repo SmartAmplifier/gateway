@@ -1,11 +1,16 @@
 import sys
 import time
 import ast
+import click
 import paho.mqtt.client as mqtt
 import pyrebase
+import requests
 
 
-def main():
+@click.command()
+@click.option('--api-url', required=True)
+@click.option('--api-port', required=True)
+def main(api_url=None, api_port=None):
     config = {
         "apiKey": "AIzaSyD9kyPxezXpH7mhRwWULwhrehEI-LaZjzY",
         "databaseURL": "https://smart-amplifier-gsyadn.firebaseio.com/",
@@ -19,10 +24,15 @@ def main():
     firebase = pyrebase.initialize_app(config).database()
 
     def stream_handler(message):
+        try:
+            volume = message['data']['volume']
+        except TypeError:
+            volume = message['data']
+
         print('Volume change for ID',
-              message['stream_id'], 'to', message['data']['volume'])
+              message['stream_id'], 'to', str(volume))
         client.publish('node/{}/led-strip/-/volume/set'.format(
-            devices[message['stream_id']]), message['data']['volume'])
+            devices[message['stream_id']]), str(volume))
 
     def on_connect(client, userdata, flags, rc):
         print("Connected with result code "+str(rc))
@@ -31,7 +41,10 @@ def main():
 
     def handler_device_list(client, userdata, msg):
         for device in ast.literal_eval(str(msg.payload, 'utf-8')):
-            firebase.child("amplifiers").child(
+            if not firebase.child('amplifiers').child(device['id']).child('volume').get().val():
+                requests.post('http://{}:{}/register/new/amplifier'.format(api_url, api_port), {
+                              "amplifier": device['id']})
+            firebase.child('amplifiers').child(
                 device['id']).stream(stream_handler, stream_id=device['id'])
             devices[device['id']] = device['alias']
 
