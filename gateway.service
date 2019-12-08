@@ -1,0 +1,15 @@
+[Unit]
+Description=Smart Amplifier Gateway
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=<DIR>
+ExecStart=/usr/bin/python3 gateway.py
+Restart=always
+RestartSec=5
+StartLimitIntervalSec=0
+
+[Install]
+WantedBy=multi-user.target
