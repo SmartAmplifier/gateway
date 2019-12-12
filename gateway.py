@@ -5,11 +5,14 @@ import click
 import paho.mqtt.client as mqtt
 import pyrebase
 import requests
+from flask import Flask, render_template
 
 
 @click.command()
 @click.option('--api-url', required=True)
 def main(api_url=None):
+    app = Flask(__name__)
+
     config = {
         "apiKey": "AIzaSyD9kyPxezXpH7mhRwWULwhrehEI-LaZjzY",
         "databaseURL": "https://smart-amplifier-gsyadn.firebaseio.com/",
@@ -53,6 +56,12 @@ def main(api_url=None):
 
     client.connect("localhost")
     client.loop_start()
+
+    @app.route('/', methods=['GET'])
+    def homepage():
+        return render_template('index.html', amplifiers=devices)
+
+    app.run('0.0.0.0', '8081')
 
     while True:
         time.sleep(1)
