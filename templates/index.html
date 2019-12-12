@@ -12,6 +12,19 @@
     </title>
 </head>
 
+<script>
+    function send_togle() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                location.reload()
+            }
+        };
+        xhttp.open("GET", "{{ api }}", true);
+        xhttp.send();
+    }
+</script>
+
 <body>
     <div class="devicetable list-group">
         <a class="device list-group-item active" style="text-align: center; color: white;">Paired
@@ -19,6 +32,15 @@
         {% for amplifier in amplifiers %}
         <a style="text-align: center" class="device list-group-item">{{ amplifier }}</a>
         {% endfor %}
+    </div>
+    <div class="pairingdiv">
+        {% if pairing %}
+        <button id="pair-stop" type="button" onclick="send_togle()" class="pairingbutton btn btn-danger">Stop
+            pairing</button>
+        {% else %}
+        <button id="pair-start" type="button" onclick="send_togle()" class="pairingbutton btn btn-success">Start
+            pairing</button>
+        {% endif %}
     </div>
 </body>
 <script>

@@ -1,8 +1,12 @@
 # gateway
 
-Gateway is bridge between Smart-Amplifier Cloud and hardware. It run's for example on Raspberry Pi as service. It needs some additional software to run.
+Gateway is bridge between Smart-Amplifier Cloud and hardware. It run's for example on Raspberry Pi as service. It needs some additional software to run. It has also user interface for adding new amplifiers and showing IDs of already paired ones:
 
-## Install
+![User interface"](doc/img/user_interface.png)
+
+It is located via Web Browser on device IP adress of DNS name [http://smart-amplifier-gateway.local/](http://smart-amplifier-gateway.local/).
+
+## Install on vanilla Raspbian
 
 First we need to install BigClown tools. They are bridge between usb serial communication and MQTT protocol. First install pip3
 
@@ -87,3 +91,15 @@ Start gateway service
 Enable gateway service on boot
 
     sudo systemctl enable gateway
+
+Forward port from 80 to 8080
+
+    iptables -t nat -A PREROUTING -p tcp --dport 80 -j DNAT --to-destination 127.0.0.1:8080
+
+Install `iptables-persistent`
+
+    sudo apt-get install iptables-persistent
+
+Save `iptables` config
+
+    sudo service iptables save

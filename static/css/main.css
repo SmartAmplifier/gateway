@@ -7,3 +7,12 @@
     margin: auto;
     margin-top: 50px
 }
+
+.pairingdiv {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.pairingbutton {
+    font-size: 6vh;
+}
