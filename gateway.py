@@ -36,7 +36,7 @@ def main(api_url=None):
         print('Volume change for ID',
               message['stream_id'], 'to', str(volume))
         client.publish('node/{}/led-strip/-/volume/set'.format(
-            devices[message['stream_id']]), '"{}"'.format(volume))
+            devices[message['stream_id']]), '{}'.format(volume))
 
     def on_connect(client, userdata, flags, rc):
         print("Connected with result code "+str(rc))
